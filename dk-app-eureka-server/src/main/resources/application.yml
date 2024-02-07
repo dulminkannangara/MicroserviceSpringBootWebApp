@@ -1,0 +1,17 @@
+#Eureka Server Disable Self register and fetch
+eureka:
+  client:
+    service-url:
+      defaultZone: http://localhost:8083/eureka
+    fetch-registry: false
+    register-with-eureka: false
+
+#Port number
+server:
+  port: 8083
+
+#Application Name
+spring:
+  application:
+    name: EUREKA_SERVER
+
