@@ -1,5 +1,0 @@
-Microservices Call
-===================
-https://www.youtube.com/watch?v=lysLDO1O-aU
-
-https://github.com/nakeshsingh/microservices/blob/main/student/src/main/java/com/code/springboot/SpringbootApplication.java
