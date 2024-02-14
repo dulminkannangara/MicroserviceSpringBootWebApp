@@ -5,9 +5,10 @@ spring:
         git:
           uri: https://github.com/dulminkannangara/testPublicConfig
           search-paths:
-            - '*service'
-          username: dulminkannangara
-          password:
+            - '*server'
+#          username:
+#          password:
+#  For a private repo, u need to add username and password / token
 
   application:
     name: CONFIG_SERVER

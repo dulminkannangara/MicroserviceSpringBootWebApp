@@ -1,0 +1,17 @@
+spring:
+  cloud:
+    config:
+      uri: http://localhost:8084
+  application:
+    name: auth
+  profiles:
+    active:
+      - dev
+  main:
+    allow-circular-references: true
+    allow-bean-definition-overriding: true
+
+
+  datasource:
+    username: root
+    password: password
