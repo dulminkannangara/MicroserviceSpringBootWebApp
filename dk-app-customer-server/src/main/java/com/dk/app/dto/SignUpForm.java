@@ -4,21 +4,17 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
-import okhttp3.MediaType;
-import okhttp3.RequestBody;
-import okio.BufferedSink;
 
 import javax.validation.constraints.Email;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.Size;
-import java.io.IOException;
 import java.util.Set;
 
 @Getter
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
-public class SignUpForm{
+public class SignUpForm {
     @NotBlank
     @Size(min = 3, max = 50)
     private String name;
@@ -27,7 +23,7 @@ public class SignUpForm{
     @Size(max = 60)
     @Email
     private String email;
-    
+
     private Set<String> role;
     
     @NotBlank
