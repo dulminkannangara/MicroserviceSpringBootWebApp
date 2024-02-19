@@ -3,9 +3,7 @@ package com.dk.app.controller;
 import com.dk.app.dto.LoginForm;
 import com.dk.app.dto.SignUpForm;
 import com.dk.app.dto.TokenRefreshRequest;
-import com.dk.app.exception.ResourceNotFoundException;
 import com.dk.app.exception.TokenRefreshException;
-import com.dk.app.microservice.service.CustomerService;
 import com.dk.app.model.*;
 import com.dk.app.repository.UserRepository;
 import com.dk.app.response.ApiResponse;
@@ -14,14 +12,16 @@ import com.dk.app.response.UserIdentityAvailability;
 import com.dk.app.security.JwtProvider;
 import com.dk.app.service.RefreshTokenService;
 import com.dk.app.service.UserDeviceService;
+import com.dk.app.service.api.CustomerCamundaService;
+import com.dk.app.service.api.CustomerService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.configurationprocessor.json.JSONException;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.bind.annotation.RequestBody;
 
 import javax.validation.Valid;
 import java.util.Optional;
@@ -33,13 +33,13 @@ import java.util.concurrent.ExecutionException;
 public class AuthController {
 
     @Autowired
-    AuthenticationManager authenticationManager;
+    private AuthenticationManager authenticationManager;
 
     @Autowired
-    UserRepository userRepository;
+    private UserRepository userRepository;
 
     @Autowired
-    JwtProvider jwtProvider;
+    private JwtProvider jwtProvider;
 
     @Autowired
     private RefreshTokenService refreshTokenService;
@@ -49,10 +49,15 @@ public class AuthController {
 
     @Autowired
     private CustomerService customerService;
+
+    @Autowired
+    private CustomerCamundaService customerCamundaService;
+
     @PostMapping("/signin")
     public ResponseEntity<?> authenticateUser(@Valid @RequestBody LoginForm loginRequest) {
+
         User user = userRepository.findByEmail(loginRequest.getEmail())
-                .orElseThrow(() -> new ResourceNotFoundException("User", "Email", loginRequest.getEmail()));
+                .orElseThrow(() -> new RuntimeException("Fail! -> Cause: User not found."));
 
         if (user.getActive()) {
             Authentication authentication = authenticationManager.authenticate(
@@ -77,12 +82,16 @@ public class AuthController {
             return ResponseEntity.ok(new JwtResponse(jwtToken, refreshToken.getToken(), jwtProvider.getExpiryDuration()));
         }
         return ResponseEntity.badRequest().body(new ApiResponse(false, "User has been deactivated/locked !!"));
-
     }
 
     @PostMapping("/signup")
-    public ResponseEntity<?> registerUser(@Valid @RequestBody SignUpForm signUpRequest) throws ExecutionException, InterruptedException {
-        return customerService.registerUser(signUpRequest);
+    public ResponseEntity<?> registerUser(@Valid @RequestBody SignUpForm signUpRequest){
+        return customerService.registerCustomer(signUpRequest);
+    }
+
+    @PostMapping("/camunda/signup")
+    public ResponseEntity<?> registerCamundaUser(@Valid @RequestBody SignUpForm signUpRequest) throws JSONException {
+        return customerCamundaService.registerCustomer(signUpRequest);
     }
 
     @PostMapping("/refresh")

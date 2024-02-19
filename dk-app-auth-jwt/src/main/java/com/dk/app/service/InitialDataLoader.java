@@ -20,7 +20,7 @@ public class InitialDataLoader {
 
 	@Bean
 	public ApplicationRunner initializer() {
-		List<RoleName> roles = Arrays.asList(RoleName.ROLE_ADMIN, RoleName.ROLE_THERAPIST, RoleName.ROLE_USER);
+		List<RoleName> roles = Arrays.asList(RoleName.ROLE_ADMIN, RoleName.ROLE_STUDENT, RoleName.ROLE_USER);
 	    return args -> roles.forEach(i -> createRoleIfNotFound(i));
 	}
 	
