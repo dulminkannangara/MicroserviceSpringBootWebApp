@@ -5,7 +5,6 @@ import com.dk.app.dto.SignUpForm;
 import com.dk.app.dto.TokenRefreshRequest;
 import com.dk.app.exception.TokenRefreshException;
 import com.dk.app.model.*;
-import com.dk.app.repository.RoleRepository;
 import com.dk.app.repository.UserRepository;
 import com.dk.app.response.ApiResponse;
 import com.dk.app.response.JwtResponse;
@@ -13,22 +12,21 @@ import com.dk.app.response.UserIdentityAvailability;
 import com.dk.app.security.JwtProvider;
 import com.dk.app.service.RefreshTokenService;
 import com.dk.app.service.UserDeviceService;
+import com.dk.app.service.api.CustomerCamundaService;
+import com.dk.app.service.api.CustomerService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
+import org.springframework.boot.configurationprocessor.json.JSONException;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import javax.validation.Valid;
-import java.net.URI;
-import java.util.HashSet;
+import java.io.IOException;
 import java.util.Optional;
-import java.util.Set;
+import java.util.concurrent.ExecutionException;
 
 @CrossOrigin(origins = "*", maxAge = 3600)
 @RestController
@@ -36,25 +34,25 @@ import java.util.Set;
 public class AuthController {
 
     @Autowired
-    AuthenticationManager authenticationManager;
+    private AuthenticationManager authenticationManager;
 
     @Autowired
-    UserRepository userRepository;
+    private UserRepository userRepository;
 
     @Autowired
-    RoleRepository roleRepository;
-
-    @Autowired
-    PasswordEncoder encoder;
-
-    @Autowired
-    JwtProvider jwtProvider;
+    private JwtProvider jwtProvider;
 
     @Autowired
     private RefreshTokenService refreshTokenService;
 
     @Autowired
     private UserDeviceService userDeviceService;
+
+    @Autowired
+    private CustomerService customerService;
+
+    @Autowired
+    private CustomerCamundaService customerCamundaService;
 
     @PostMapping("/signin")
     public ResponseEntity<?> authenticateUser(@Valid @RequestBody LoginForm loginRequest) {
@@ -88,52 +86,13 @@ public class AuthController {
     }
 
     @PostMapping("/signup")
-    public ResponseEntity<?> registerUser(@Valid @RequestBody SignUpForm signUpRequest) {
-        if(userRepository.existsByEmail(signUpRequest.getEmail())) {
-            return new ResponseEntity<String>("Fail -> Email is already in use!",
-                    HttpStatus.BAD_REQUEST);
-        }
+    public ResponseEntity<?> registerUser(@Valid @RequestBody SignUpForm signUpRequest){
+        return customerService.registerCustomer(signUpRequest);
+    }
 
-        // Creating user's account
-        User user = new User();
-        user.setName(signUpRequest.getName());
-        user.setEmail(signUpRequest.getEmail());
-        user.setPassword(encoder.encode(signUpRequest.getPassword()));
-
-        Set<String> strRoles = signUpRequest.getRole();
-        Set<Role> roles = new HashSet<>();
-
-        strRoles.forEach(role -> {
-            switch(role) {
-                case "admin":
-                    Role adminRole = roleRepository.findByName(RoleName.ROLE_ADMIN)
-                            .orElseThrow(() -> new RuntimeException("Fail! -> Cause: User Role not found."));
-                    roles.add(adminRole);
-
-                    break;
-                case "therapist":
-                    Role therapistRole = roleRepository.findByName(RoleName.ROLE_THERAPIST)
-                            .orElseThrow(() -> new RuntimeException("Fail! -> Cause: User Role not found."));
-                    roles.add(therapistRole);
-
-                    break;
-                default:
-                    Role userRole = roleRepository.findByName(RoleName.ROLE_USER)
-                            .orElseThrow(() -> new RuntimeException("Fail! -> Cause: User Role not found."));
-                    roles.add(userRole);
-            }
-        });
-
-        user.setRoles(roles);
-        user.activate();
-        User result = userRepository.save(user);
-
-        URI location = ServletUriComponentsBuilder
-                .fromCurrentContextPath().path("/user/me")
-                .buildAndExpand(result.getId()).toUri();
-
-        return ResponseEntity.created(location)
-                .body(new ApiResponse(true, "User registered successfully!"));
+    @PostMapping("/camunda/signup")
+    public ResponseEntity<?> registerCamundaUser(@Valid @RequestBody SignUpForm signUpRequest) throws JSONException, IOException {
+        return customerCamundaService.registerCustomer(signUpRequest);
     }
 
     @PostMapping("/refresh")

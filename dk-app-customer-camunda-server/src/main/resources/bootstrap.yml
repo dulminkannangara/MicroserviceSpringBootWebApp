@@ -1,0 +1,42 @@
+camunda:
+  bpm:
+    admin-user:
+      id: admin
+      password: adminpw
+
+#server:
+#  port: 9096
+spring:
+  main:
+    allow-circular-references: true
+    allow-bean-definition-overriding: true
+  application:
+    name: CUSTOMER-CAMUNDA
+#  autoconfigure:
+#    exclude: org.springframework.boot.autoconfigure.jdbc.DataSourceAutoConfiguration
+  registration:
+    datasource:
+      driver-class-name: com.mysql.cj.jdbc.Driver
+      jdbcUrl: jdbc:mysql://localhost:3306/dk_app?createDatabaseIfNotExist=true
+      password: password
+      username: root
+  jpa:
+    properties:
+      hibernate:
+        dialect: org.hibernate.dialect.MySQL5Dialect
+        jdbc:
+          lob:
+            non_contextual_creation: true
+    show-sql: true
+    hibernate:
+      ddl-auto: update
+
+  datasource:
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    password: password
+    username: root
+    jdbcUrl: jdbc:mysql://localhost:3306/camunda_customer?createDatabaseIfNotExist=true&nullCatalogMeansCurrent=true
+
+logging:
+  level:
+    org.springframework.security: DEBUG

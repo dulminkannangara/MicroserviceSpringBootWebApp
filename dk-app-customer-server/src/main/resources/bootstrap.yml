@@ -1,0 +1,36 @@
+
+spring:
+  #  cloud:
+  #    config:
+  #      uri: http://localhost:8084
+  #  application:
+  #    name: auth
+  #  profiles:
+  #    active:
+  #      - dev
+  main:
+    allow-circular-references: true
+    allow-bean-definition-overriding: true
+
+  #spring:
+  application:
+    name: CUSTOMER-SERVICE
+
+  datasource:
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    username: root
+    password: password
+    url: jdbc:mysql://localhost:3306/dk_app?createDatabaseIfNotExist=true
+  jpa:
+    show-sql: true
+    hibernate:
+      ddl-auto: update
+    properties:
+      hibernate:
+        dialect: org.hibernate.dialect.MySQL5Dialect
+
+logging:
+  level:
+    org.springframework.security: DEBUG
+#server:
+#  port: 9292
