@@ -24,6 +24,7 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
+import java.io.IOException;
 import java.util.Optional;
 import java.util.concurrent.ExecutionException;
 
@@ -90,7 +91,7 @@ public class AuthController {
     }
 
     @PostMapping("/camunda/signup")
-    public ResponseEntity<?> registerCamundaUser(@Valid @RequestBody SignUpForm signUpRequest) throws JSONException {
+    public ResponseEntity<?> registerCamundaUser(@Valid @RequestBody SignUpForm signUpRequest) throws JSONException, IOException {
         return customerCamundaService.registerCustomer(signUpRequest);
     }
 
