@@ -1,6 +1,6 @@
-package com.dk.app.controller.servicetask.register.delegate;
+package com.dk.app.controller.servicetask.register.delegate.otpvalidation;
 
-import com.dk.app.dto.SignUpForm;
+import com.dk.app.dto.OTPRequest;
 import com.dk.app.service.register.UserService;
 import org.camunda.bpm.engine.delegate.DelegateExecution;
 import org.camunda.bpm.engine.delegate.JavaDelegate;
@@ -8,12 +8,12 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
+
 import java.util.LinkedHashMap;
 
 @Component
-public class ValidatePayload implements JavaDelegate {
-
-    private static final Logger LOGGER = LoggerFactory.getLogger(ValidatePayload.class);
+public class ValidateOTPValidationPayload implements JavaDelegate {
+    private static final Logger LOGGER = LoggerFactory.getLogger(ValidateOTPValidationPayload.class);
 
     @Autowired
     private UserService service;
@@ -22,9 +22,10 @@ public class ValidatePayload implements JavaDelegate {
     public void execute(DelegateExecution execution){
         try {
             LOGGER.info("ValidatePayload : processing");
-            LinkedHashMap<String, Object> payload_values = (LinkedHashMap<String, Object>) execution.getVariable("payload");
-            SignUpForm payload = service.getPayload(payload_values);
-            execution.setVariable("payload",payload);
+            LinkedHashMap<String, String> payload_values = (LinkedHashMap<String, String>) execution.getVariable("otprequest");
+            OTPRequest payload = service.getOTPPayload(payload_values);
+            execution.setVariable("customerOTP",payload.getOtp());
+            execution.setVariable("hasCustomerOTP",(payload.getOtp() == null || payload.getOtp().isEmpty()) ? "no":"yes");
             LOGGER.info("ValidatePayload : success");
         }catch (Exception exception){
             LOGGER.error(exception.getMessage(),exception);

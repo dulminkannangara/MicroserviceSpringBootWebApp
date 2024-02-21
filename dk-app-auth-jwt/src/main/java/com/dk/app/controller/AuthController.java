@@ -1,6 +1,7 @@
 package com.dk.app.controller;
 
 import com.dk.app.dto.LoginForm;
+import com.dk.app.dto.OTPRequest;
 import com.dk.app.dto.SignUpForm;
 import com.dk.app.dto.TokenRefreshRequest;
 import com.dk.app.exception.TokenRefreshException;
@@ -93,6 +94,11 @@ public class AuthController {
     @PostMapping("/camunda/signup")
     public ResponseEntity<?> registerCamundaUser(@Valid @RequestBody SignUpForm signUpRequest) throws JSONException, IOException {
         return customerCamundaService.registerCustomer(signUpRequest);
+    }
+
+    @PostMapping("/camunda/otpverify")
+    public ResponseEntity<?>  otpVerification(@Valid @RequestBody OTPRequest otpRequest){
+        return customerCamundaService.validateOTPRestCall(otpRequest);
     }
 
     @PostMapping("/refresh")

@@ -1,12 +1,12 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<bpmn:definitions xmlns:bpmn="http://www.omg.org/spec/BPMN/20100524/MODEL" xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI" xmlns:dc="http://www.omg.org/spec/DD/20100524/DC" xmlns:camunda="http://camunda.org/schema/1.0/bpmn" xmlns:di="http://www.omg.org/spec/DD/20100524/DI" xmlns:modeler="http://camunda.org/schema/modeler/1.0" id="Definitions_0j0f83z" targetNamespace="http://bpmn.io/schema/bpmn" exporter="Camunda Modeler" exporterVersion="4.9.0" modeler:executionPlatform="Camunda Platform" modeler:executionPlatformVersion="7.15.0">
+<bpmn:definitions xmlns:bpmn="http://www.omg.org/spec/BPMN/20100524/MODEL" xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI" xmlns:dc="http://www.omg.org/spec/DD/20100524/DC" xmlns:camunda="http://camunda.org/schema/1.0/bpmn" xmlns:di="http://www.omg.org/spec/DD/20100524/DI" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:modeler="http://camunda.org/schema/modeler/1.0" id="Definitions_0j0f83z" targetNamespace="http://bpmn.io/schema/bpmn" exporter="Camunda Modeler" exporterVersion="4.9.0" modeler:executionPlatform="Camunda Platform" modeler:executionPlatformVersion="7.15.0">
   <bpmn:process id="customer_registration_id" name="Customer Registration" isExecutable="true">
     <bpmn:startEvent id="start_register_customer_id" name="start register Customer" camunda:asyncAfter="true">
       <bpmn:outgoing>Flow_1rs6hpi</bpmn:outgoing>
     </bpmn:startEvent>
     <bpmn:sequenceFlow id="Flow_1rs6hpi" sourceRef="start_register_customer_id" targetRef="validate_payload_id" />
     <bpmn:serviceTask id="save_customer_details_id" name="Save Customer Details" camunda:asyncAfter="true" camunda:delegateExpression="${saveCustomerDetails}">
-      <bpmn:incoming>Flow_1nwlac1</bpmn:incoming>
+      <bpmn:incoming>Flow_0hqaskn</bpmn:incoming>
       <bpmn:outgoing>Flow_1aj7jgt</bpmn:outgoing>
     </bpmn:serviceTask>
     <bpmn:sequenceFlow id="Flow_1aj7jgt" sourceRef="save_customer_details_id" targetRef="end_id" />
@@ -22,7 +22,7 @@
       <bpmn:outgoing>Flow_0vwhao4</bpmn:outgoing>
       <bpmn:outgoing>Flow_1czk27s</bpmn:outgoing>
     </bpmn:parallelGateway>
-    <bpmn:sequenceFlow id="Flow_0geresm" sourceRef="Gateway_1qgtc41" targetRef="validate_otp_id" />
+    <bpmn:sequenceFlow id="Flow_0geresm" sourceRef="Gateway_1qgtc41" targetRef="Event_1g8n1nh" />
     <bpmn:sequenceFlow id="Flow_0z5ar61" sourceRef="otp_verification_patch_responce_id" targetRef="Gateway_1qgtc41" />
     <bpmn:parallelGateway id="Gateway_1qgtc41">
       <bpmn:incoming>Flow_09rh07c</bpmn:incoming>
@@ -38,13 +38,8 @@
       <bpmn:outgoing>Flow_0z5ar61</bpmn:outgoing>
       <bpmn:messageEventDefinition id="MessageEventDefinition_1feqpss" messageRef="Message_10wyy9a" />
     </bpmn:intermediateCatchEvent>
-    <bpmn:sequenceFlow id="Flow_1nwlac1" sourceRef="validate_otp_id" targetRef="save_customer_details_id" />
-    <bpmn:serviceTask id="validate_otp_id" name="Validate OTP" camunda:asyncAfter="true" camunda:delegateExpression="${validateOTP}">
-      <bpmn:incoming>Flow_0geresm</bpmn:incoming>
-      <bpmn:outgoing>Flow_1nwlac1</bpmn:outgoing>
-    </bpmn:serviceTask>
     <bpmn:subProcess id="send_otp_id" name="Send OTP" triggeredByEvent="true">
-      <bpmn:startEvent id="start_send_otp_id" name="Start Send OTP" isInterrupting="false">
+      <bpmn:startEvent id="start_send_otp_id" name="Start Send OTP" camunda:asyncAfter="true" isInterrupting="false">
         <bpmn:outgoing>Flow_082eaqh</bpmn:outgoing>
         <bpmn:messageEventDefinition id="MessageEventDefinition_1i6w5jt" messageRef="Message_1kuv02q" />
       </bpmn:startEvent>
@@ -63,95 +58,160 @@
       <bpmn:incoming>Flow_1rs6hpi</bpmn:incoming>
       <bpmn:outgoing>Flow_1351ifr</bpmn:outgoing>
     </bpmn:serviceTask>
+    <bpmn:subProcess id="Activity_1aswqxw" name="OTP Validation" triggeredByEvent="true">
+      <bpmn:startEvent id="Event_1bfsk8j" name="Start OTP Validation" camunda:asyncAfter="true" isInterrupting="false">
+        <bpmn:outgoing>Flow_1syxrz6</bpmn:outgoing>
+        <bpmn:messageEventDefinition id="MessageEventDefinition_1c47y7d" messageRef="Message_0y92oho" />
+      </bpmn:startEvent>
+      <bpmn:endEvent id="Event_0wnx72u">
+        <bpmn:incoming>Flow_10qr7eo</bpmn:incoming>
+      </bpmn:endEvent>
+      <bpmn:serviceTask id="otp_validation_id" name="OTP Validation Process" camunda:asyncAfter="true" camunda:delegateExpression="${validationOTP}">
+        <bpmn:incoming>Flow_14l4zu3</bpmn:incoming>
+        <bpmn:outgoing>Flow_0pt9f3c</bpmn:outgoing>
+      </bpmn:serviceTask>
+      <bpmn:sequenceFlow id="Flow_1qtbda8" sourceRef="valid_otp_notify_id" targetRef="Gateway_1uj92kf" />
+      <bpmn:serviceTask id="valid_otp_notify_id" name="Valid OTP Notify" camunda:asyncAfter="true" camunda:delegateExpression="${validOTPNotify}">
+        <bpmn:incoming>otp_match_id</bpmn:incoming>
+        <bpmn:outgoing>Flow_1qtbda8</bpmn:outgoing>
+      </bpmn:serviceTask>
+      <bpmn:exclusiveGateway id="Gateway_0duetc0" default="Flow_0v80bb1">
+        <bpmn:incoming>Flow_0pt9f3c</bpmn:incoming>
+        <bpmn:outgoing>otp_match_id</bpmn:outgoing>
+        <bpmn:outgoing>Flow_0v80bb1</bpmn:outgoing>
+      </bpmn:exclusiveGateway>
+      <bpmn:sequenceFlow id="otp_match_id" name="OTP Match" sourceRef="Gateway_0duetc0" targetRef="valid_otp_notify_id">
+        <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">${OTPValidation=='valid'}</bpmn:conditionExpression>
+      </bpmn:sequenceFlow>
+      <bpmn:sequenceFlow id="Flow_0v80bb1" sourceRef="Gateway_0duetc0" targetRef="invalid_otp_notify_id" />
+      <bpmn:exclusiveGateway id="Gateway_1uj92kf" default="Flow_10qr7eo">
+        <bpmn:incoming>Flow_1qtbda8</bpmn:incoming>
+        <bpmn:incoming>Flow_1ln7c8l</bpmn:incoming>
+        <bpmn:outgoing>Flow_10qr7eo</bpmn:outgoing>
+      </bpmn:exclusiveGateway>
+      <bpmn:sequenceFlow id="Flow_10qr7eo" sourceRef="Gateway_1uj92kf" targetRef="Event_0wnx72u" />
+      <bpmn:sequenceFlow id="Flow_1ln7c8l" sourceRef="invalid_otp_notify_id" targetRef="Gateway_1uj92kf" />
+      <bpmn:serviceTask id="invalid_otp_notify_id" name="Invalid OTP Notify" camunda:asyncAfter="true" camunda:delegateExpression="${invalidOTPNotify}">
+        <bpmn:incoming>Flow_0v80bb1</bpmn:incoming>
+        <bpmn:outgoing>Flow_1ln7c8l</bpmn:outgoing>
+      </bpmn:serviceTask>
+      <bpmn:intermediateCatchEvent id="Event_0gf6z42" name="Has Customer OTP" camunda:asyncAfter="true">
+        <bpmn:incoming>Flow_0iqntea</bpmn:incoming>
+        <bpmn:outgoing>Flow_14l4zu3</bpmn:outgoing>
+        <bpmn:conditionalEventDefinition id="ConditionalEventDefinition_0mmbw12">
+          <bpmn:condition xsi:type="bpmn:tFormalExpression">${hasCustomerOTP=='yes'}</bpmn:condition>
+        </bpmn:conditionalEventDefinition>
+      </bpmn:intermediateCatchEvent>
+      <bpmn:sequenceFlow id="Flow_14l4zu3" sourceRef="Event_0gf6z42" targetRef="otp_validation_id" />
+      <bpmn:sequenceFlow id="Flow_0pt9f3c" sourceRef="otp_validation_id" targetRef="Gateway_0duetc0" />
+      <bpmn:sequenceFlow id="Flow_0iqntea" sourceRef="validate_otp_validation_payload_id" targetRef="Event_0gf6z42" />
+      <bpmn:sequenceFlow id="Flow_1syxrz6" sourceRef="Event_1bfsk8j" targetRef="validate_otp_validation_payload_id" />
+      <bpmn:serviceTask id="validate_otp_validation_payload_id" name="Validate Payload" camunda:asyncAfter="true" camunda:delegateExpression="${validateOTPValidationPayload}">
+        <bpmn:incoming>Flow_1syxrz6</bpmn:incoming>
+        <bpmn:outgoing>Flow_0iqntea</bpmn:outgoing>
+      </bpmn:serviceTask>
+    </bpmn:subProcess>
+    <bpmn:sequenceFlow id="Flow_0hqaskn" sourceRef="Event_1g8n1nh" targetRef="save_customer_details_id" />
+    <bpmn:intermediateCatchEvent id="Event_1g8n1nh" name="Is Valid OTP" camunda:asyncAfter="true">
+      <bpmn:incoming>Flow_0geresm</bpmn:incoming>
+      <bpmn:outgoing>Flow_0hqaskn</bpmn:outgoing>
+      <bpmn:conditionalEventDefinition id="ConditionalEventDefinition_07bug9x">
+        <bpmn:condition xsi:type="bpmn:tFormalExpression">${isValidOTP=='yes'}</bpmn:condition>
+      </bpmn:conditionalEventDefinition>
+    </bpmn:intermediateCatchEvent>
   </bpmn:process>
   <bpmn:message id="Message_10wyy9a" name="OTTPVerificationPatchResponceMessage" />
-  <bpmn:message id="Message_1kuv02q" name="StartSendOTP" />
+  <bpmn:message id="Message_1kuv02q" name="StartSendOTPMessage" />
+  <bpmn:message id="Message_0y92oho" name="StartOTPValidationMessage" />
   <bpmndi:BPMNDiagram id="BPMNDiagram_1">
     <bpmndi:BPMNPlane id="BPMNPlane_1" bpmnElement="customer_registration_id">
-      <bpmndi:BPMNEdge id="Flow_1rs6hpi_di" bpmnElement="Flow_1rs6hpi">
-        <di:waypoint x="208" y="117" />
-        <di:waypoint x="320" y="117" />
-      </bpmndi:BPMNEdge>
-      <bpmndi:BPMNEdge id="Flow_1aj7jgt_di" bpmnElement="Flow_1aj7jgt">
-        <di:waypoint x="1260" y="117" />
-        <di:waypoint x="1362" y="117" />
-      </bpmndi:BPMNEdge>
-      <bpmndi:BPMNEdge id="Flow_09rh07c_di" bpmnElement="Flow_09rh07c">
-        <di:waypoint x="720" y="117" />
-        <di:waypoint x="775" y="117" />
-      </bpmndi:BPMNEdge>
-      <bpmndi:BPMNEdge id="Flow_0vwhao4_di" bpmnElement="Flow_0vwhao4">
-        <di:waypoint x="575" y="117" />
-        <di:waypoint x="620" y="117" />
-      </bpmndi:BPMNEdge>
-      <bpmndi:BPMNEdge id="Flow_1czk27s_di" bpmnElement="Flow_1czk27s">
-        <di:waypoint x="550" y="142" />
-        <di:waypoint x="550" y="230" />
-        <di:waypoint x="652" y="230" />
-      </bpmndi:BPMNEdge>
-      <bpmndi:BPMNEdge id="Flow_0geresm_di" bpmnElement="Flow_0geresm">
-        <di:waypoint x="825" y="117" />
-        <di:waypoint x="930" y="117" />
+      <bpmndi:BPMNEdge id="Flow_1351ifr_di" bpmnElement="Flow_1351ifr">
+        <di:waypoint x="600" y="117" />
+        <di:waypoint x="685" y="117" />
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge id="Flow_0z5ar61_di" bpmnElement="Flow_0z5ar61">
-        <di:waypoint x="688" y="230" />
-        <di:waypoint x="800" y="230" />
-        <di:waypoint x="800" y="142" />
+        <di:waypoint x="848" y="230" />
+        <di:waypoint x="960" y="230" />
+        <di:waypoint x="960" y="142" />
       </bpmndi:BPMNEdge>
-      <bpmndi:BPMNEdge id="Flow_1nwlac1_di" bpmnElement="Flow_1nwlac1">
-        <di:waypoint x="1030" y="117" />
-        <di:waypoint x="1160" y="117" />
+      <bpmndi:BPMNEdge id="Flow_0geresm_di" bpmnElement="Flow_0geresm">
+        <di:waypoint x="985" y="117" />
+        <di:waypoint x="1062" y="117" />
       </bpmndi:BPMNEdge>
-      <bpmndi:BPMNEdge id="Flow_1351ifr_di" bpmnElement="Flow_1351ifr">
-        <di:waypoint x="420" y="117" />
-        <di:waypoint x="525" y="117" />
+      <bpmndi:BPMNEdge id="Flow_1czk27s_di" bpmnElement="Flow_1czk27s">
+        <di:waypoint x="710" y="142" />
+        <di:waypoint x="710" y="230" />
+        <di:waypoint x="812" y="230" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_0vwhao4_di" bpmnElement="Flow_0vwhao4">
+        <di:waypoint x="735" y="117" />
+        <di:waypoint x="780" y="117" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_09rh07c_di" bpmnElement="Flow_09rh07c">
+        <di:waypoint x="880" y="117" />
+        <di:waypoint x="935" y="117" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_1aj7jgt_di" bpmnElement="Flow_1aj7jgt">
+        <di:waypoint x="1280" y="117" />
+        <di:waypoint x="1392" y="117" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_1rs6hpi_di" bpmnElement="Flow_1rs6hpi">
+        <di:waypoint x="378" y="117" />
+        <di:waypoint x="500" y="117" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_0hqaskn_di" bpmnElement="Flow_0hqaskn">
+        <di:waypoint x="1098" y="117" />
+        <di:waypoint x="1180" y="117" />
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNShape id="Gateway_1tc8y1s_di" bpmnElement="Gateway_0kkn4z4">
-        <dc:Bounds x="525" y="92" width="50" height="50" />
+        <dc:Bounds x="685" y="92" width="50" height="50" />
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="Gateway_1rzbx1a_di" bpmnElement="Gateway_1qgtc41">
-        <dc:Bounds x="775" y="92" width="50" height="50" />
+        <dc:Bounds x="935" y="92" width="50" height="50" />
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="Activity_0niix15_di" bpmnElement="call_send_otp_id">
-        <dc:Bounds x="620" y="77" width="100" height="80" />
+        <dc:Bounds x="780" y="77" width="100" height="80" />
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="Event_0fnl98r_di" bpmnElement="otp_verification_patch_responce_id">
-        <dc:Bounds x="652" y="212" width="36" height="36" />
+        <dc:Bounds x="812" y="212" width="36" height="36" />
         <bpmndi:BPMNLabel>
-          <dc:Bounds x="630" y="255" width="81" height="40" />
-        </bpmndi:BPMNLabel>
-      </bpmndi:BPMNShape>
-      <bpmndi:BPMNShape id="Event_1jia19h_di" bpmnElement="end_id">
-        <dc:Bounds x="1362" y="99" width="36" height="36" />
-        <bpmndi:BPMNLabel>
-          <dc:Bounds x="1370" y="142" width="20" height="14" />
-        </bpmndi:BPMNLabel>
-      </bpmndi:BPMNShape>
-      <bpmndi:BPMNShape id="Activity_0oyiqsv_di" bpmnElement="save_customer_details_id">
-        <dc:Bounds x="1160" y="77" width="100" height="80" />
-      </bpmndi:BPMNShape>
-      <bpmndi:BPMNShape id="Activity_1l84l02_di" bpmnElement="validate_otp_id">
-        <dc:Bounds x="930" y="77" width="100" height="80" />
-      </bpmndi:BPMNShape>
-      <bpmndi:BPMNShape id="_BPMNShape_StartEvent_2" bpmnElement="start_register_customer_id">
-        <dc:Bounds x="172" y="99" width="36" height="36" />
-        <bpmndi:BPMNLabel>
-          <dc:Bounds x="160" y="142" width="63" height="27" />
+          <dc:Bounds x="790" y="255" width="81" height="40" />
         </bpmndi:BPMNLabel>
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="Activity_0046155_di" bpmnElement="validate_payload_id">
-        <dc:Bounds x="320" y="77" width="100" height="80" />
+        <dc:Bounds x="500" y="77" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="_BPMNShape_StartEvent_2" bpmnElement="start_register_customer_id">
+        <dc:Bounds x="342" y="99" width="36" height="36" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="330" y="142" width="63" height="27" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_0oyiqsv_di" bpmnElement="save_customer_details_id">
+        <dc:Bounds x="1180" y="77" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Event_1jia19h_di" bpmnElement="end_id">
+        <dc:Bounds x="1392" y="99" width="36" height="36" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="1400" y="142" width="20" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Event_0kpol4y_di" bpmnElement="Event_1g8n1nh">
+        <dc:Bounds x="1062" y="99" width="36" height="36" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="1049" y="142" width="62" height="14" />
+        </bpmndi:BPMNLabel>
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="Activity_0ao3dzt_di" bpmnElement="send_otp_id" isExpanded="true">
-        <dc:Bounds x="280" y="360" width="480" height="270" />
+        <dc:Bounds x="280" y="360" width="640" height="270" />
       </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge id="Flow_05du7uj_di" bpmnElement="Flow_05du7uj">
+        <di:waypoint x="580" y="460" />
+        <di:waypoint x="732" y="460" />
+      </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge id="Flow_082eaqh_di" bpmnElement="Flow_082eaqh">
         <di:waypoint x="356" y="460" />
-        <di:waypoint x="410" y="460" />
-      </bpmndi:BPMNEdge>
-      <bpmndi:BPMNEdge id="Flow_05du7uj_di" bpmnElement="Flow_05du7uj">
-        <di:waypoint x="510" y="460" />
-        <di:waypoint x="572" y="460" />
+        <di:waypoint x="480" y="460" />
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNShape id="Event_0sz1mug_di" bpmnElement="start_send_otp_id">
         <dc:Bounds x="320" y="442" width="36" height="36" />
@@ -159,11 +219,88 @@
           <dc:Bounds x="300" y="485" width="79" height="14" />
         </bpmndi:BPMNLabel>
       </bpmndi:BPMNShape>
-      <bpmndi:BPMNShape id="Activity_0w0cze7_di" bpmnElement="send_otp_process_id">
-        <dc:Bounds x="410" y="420" width="100" height="80" />
-      </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="Event_1i1hpq0_di" bpmnElement="Event_1i1hpq0">
-        <dc:Bounds x="572" y="442" width="36" height="36" />
+        <dc:Bounds x="732" y="442" width="36" height="36" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_0w0cze7_di" bpmnElement="send_otp_process_id">
+        <dc:Bounds x="480" y="420" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_1to4nws_di" bpmnElement="Activity_1aswqxw" isExpanded="true">
+        <dc:Bounds x="180" y="740" width="1070" height="310" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge id="Flow_1qtbda8_di" bpmnElement="Flow_1qtbda8">
+        <di:waypoint x="940" y="840" />
+        <di:waypoint x="1005" y="840" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_0ztd578_di" bpmnElement="otp_match_id">
+        <di:waypoint x="755" y="840" />
+        <di:waypoint x="840" y="840" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="770" y="822" width="56" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_0v80bb1_di" bpmnElement="Flow_0v80bb1">
+        <di:waypoint x="730" y="865" />
+        <di:waypoint x="730" y="950" />
+        <di:waypoint x="840" y="950" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_10qr7eo_di" bpmnElement="Flow_10qr7eo">
+        <di:waypoint x="1055" y="840" />
+        <di:waypoint x="1112" y="840" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_1ln7c8l_di" bpmnElement="Flow_1ln7c8l">
+        <di:waypoint x="940" y="950" />
+        <di:waypoint x="1030" y="950" />
+        <di:waypoint x="1030" y="865" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_14l4zu3_di" bpmnElement="Flow_14l4zu3">
+        <di:waypoint x="488" y="840" />
+        <di:waypoint x="560" y="840" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_0pt9f3c_di" bpmnElement="Flow_0pt9f3c">
+        <di:waypoint x="660" y="840" />
+        <di:waypoint x="705" y="840" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_0iqntea_di" bpmnElement="Flow_0iqntea">
+        <di:waypoint x="410" y="840" />
+        <di:waypoint x="452" y="840" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_1syxrz6_di" bpmnElement="Flow_1syxrz6">
+        <di:waypoint x="238" y="840" />
+        <di:waypoint x="310" y="840" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNShape id="Event_0px0r1z_di" bpmnElement="Event_0gf6z42">
+        <dc:Bounds x="452" y="822" width="36" height="36" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="437" y="865" width="72" height="27" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Gateway_0duetc0_di" bpmnElement="Gateway_0duetc0" isMarkerVisible="true">
+        <dc:Bounds x="705" y="815" width="50" height="50" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_0clwvas_di" bpmnElement="valid_otp_notify_id">
+        <dc:Bounds x="840" y="800" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Event_0wnx72u_di" bpmnElement="Event_0wnx72u">
+        <dc:Bounds x="1112" y="822" width="36" height="36" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Gateway_1uj92kf_di" bpmnElement="Gateway_1uj92kf" isMarkerVisible="true">
+        <dc:Bounds x="1005" y="815" width="50" height="50" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_0zogt0l_di" bpmnElement="invalid_otp_notify_id">
+        <dc:Bounds x="840" y="910" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_0ph00da_di" bpmnElement="otp_validation_id">
+        <dc:Bounds x="560" y="800" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Event_0l8ol8a_di" bpmnElement="Event_1bfsk8j">
+        <dc:Bounds x="202" y="822" width="36" height="36" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="196" y="865" width="50" height="27" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_0qe2z8a_di" bpmnElement="validate_otp_validation_payload_id">
+        <dc:Bounds x="310" y="800" width="100" height="80" />
       </bpmndi:BPMNShape>
     </bpmndi:BPMNPlane>
   </bpmndi:BPMNDiagram>
