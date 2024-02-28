@@ -1,0 +1,302 @@
+{
+	"info": {
+		"_postman_id": "3b870cfb-8921-4434-b4aa-be9e1430f689",
+		"name": "dk-app-postman-collection",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "14407860",
+		"_collection_link": "https://dulyaraindustries.postman.co/workspace/New-Team-Workspace~d74fcac9-b95b-48af-8e6e-bd2626de0718/collection/14407860-3b870cfb-8921-4434-b4aa-be9e1430f689?action=share&source=collection_link&creator=14407860"
+	},
+	"item": [
+		{
+			"name": "Signup",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"name\": \"Anil8\",\r\n    \"email\": \"anil8@gmail.com\",\r\n    \"role\":[\"admin\"],\r\n    \"password\": \"123abc\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:8888/api/auth/signup",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8888",
+					"path": [
+						"api",
+						"auth",
+						"signup"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Camunda Signup",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"name\": \"Malith\",\r\n    \"email\": \"malith@gmail.com\",\r\n    \"role\":[\"admin\"],\r\n    \"password\": \"123abc\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:8888/api/auth/camunda/signup",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8888",
+					"path": [
+						"api",
+						"auth",
+						"camunda",
+						"signup"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Camunda Signup OTP Validation",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"processInstanceId\": \"0b1e3d54-d0ab-11ee-97d4-48d22421e2a8\",\r\n    \"email\": \"abc@gmail.com\",\r\n    \"otp\": \"1234\"\r\n}\r\n\r\n// {\r\n//     \"messageName\": \"StartOTPValidationMessage\",\r\n//     \"processInstanceId\": \"dbd24849-d0a0-11ee-987e-48d22421e2a8\",\r\n//     \"processVariables\": {\r\n//         \"otprequest\":{\r\n//             \"value\": {\r\n//                 \"email\": \"abc@gmail.com\",\r\n//                 \"otp\": \"1234\"\r\n//             }\r\n//         }\r\n//     }\r\n// }\r\n\r\n",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:8888/api/auth/camunda/otpverify",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8888",
+					"path": [
+						"api",
+						"auth",
+						"camunda",
+						"otpverify"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Login",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"email\": \"abc@gmail.com\",\r\n    \"password\": \"123abc\",\r\n    \"deviceInfo\":{\r\n        \"deviceId\": \"aaa-aaa-aaaaaa-aaaaa\",\r\n        \"deviceType\": \"BROWSER_OPERA\"\r\n    }\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:8888/api/auth/signin",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8888",
+					"path": [
+						"api",
+						"auth",
+						"signin"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Refresh Access Token",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"refreshToken\": \"004c1278-d047-49a2-a7aa-05bb18006242\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:9191/api/auth/refresh",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "9191",
+					"path": [
+						"api",
+						"auth",
+						"refresh"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "User Access",
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJhYmNAZ21haWwuY29tIiwiaXNzIjoiVGhlcmFwZXgiLCJqdGkiOiIxIiwiaWF0IjoxNzA3NjI3MDkxLCJleHAiOjE3MDc2MzA2OTF9.h9HHIcsQmDZsYnoFgSsqzvPHBMHwRz5dJMjyLq03oGbnw4mno_v8FmjgPwkwG_5zXAV899wy9Czc4yEVkd0uxA",
+							"type": "string"
+						}
+					]
+				},
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "http://localhost:9191/api/users/me",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "9191",
+					"path": [
+						"api",
+						"users",
+						"me"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Admin Access",
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJhYmNAZ21haWwuY29tIiwiaXNzIjoiU3RhY2tBYnVzZSIsImp0aSI6IjEiLCJpYXQiOjE3MDc2MjY5MTQsImV4cCI6MTcwNzYzMDUxM30.9rGfF_9FI7267XnbO43xScbJAh5kS3oH_u3ePOh7F2G9L0g3d0SgoAaQYM4yNHbpkAYlvDYSQ1TBuppMgZhmmQ",
+							"type": "string"
+						}
+					]
+				},
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "http://localhost:9191/api/users/byID/1",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "9191",
+					"path": [
+						"api",
+						"users",
+						"byID",
+						"1"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Logout",
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJhYmNAZ21haWwuY29tIiwiaXNzIjoiU3RhY2tBYnVzZSIsImp0aSI6IjEiLCJpYXQiOjE3MDc2MjkyMTIsImV4cCI6MTcwNzYzMjgxMn0.W1NrTW-bUCkSm1Dxwk6X5hUH-xLeUFSwn6O89JF4XfIecRhVctnn7u2TD0BI2J_T06ZvMcrHYbovJc-gnhb3qQ",
+							"type": "string"
+						}
+					]
+				},
+				"method": "PUT",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"deviceInfo\":{\r\n        \"deviceId\": \"aaa-aaa-aaaaaa-aaaaa\",\r\n        \"deviceType\": \"BROWSER_OPERA\"\r\n    },\r\n    \"token\":\"eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJhYmNAZ21haWwuY29tIiwiaXNzIjoiU3RhY2tBYnVzZSIsImp0aSI6IjEiLCJpYXQiOjE3MDc2MjkyMTIsImV4cCI6MTcwNzYzMjgxMn0.W1NrTW-bUCkSm1Dxwk6X5hUH-xLeUFSwn6O89JF4XfIecRhVctnn7u2TD0BI2J_T06ZvMcrHYbovJc-gnhb3qQ\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:9191/api/users/logout",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "9191",
+					"path": [
+						"api",
+						"users",
+						"logout"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "AdminAccess2",
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJhYmNAZ21haWwuY29tIiwiaXNzIjoiU3RhY2tBYnVzZSIsImp0aSI6IjEiLCJpYXQiOjE3MDc5Njc5MDAsImV4cCI6MTcwNzk3MTUwMH0.pkCP-ama4uJmo5gQ1zQU5-i14VFtNfKSAATpAyapCqC1JrFQNyVu3VxRqcjq4OG7Na9a7dcddSO53VaJWqTn8A",
+							"type": "string"
+						}
+					]
+				},
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "http://localhost:8888/api/users?email=abc@gmail.com",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8888",
+					"path": [
+						"api",
+						"users"
+					],
+					"query": [
+						{
+							"key": "email",
+							"value": "abc@gmail.com"
+						}
+					]
+				}
+			},
+			"response": []
+		}
+	]
+}
